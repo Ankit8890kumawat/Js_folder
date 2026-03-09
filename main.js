@@ -383,11 +383,23 @@ function searchWordInGrid(word) {
 
 
 
-const words = ["KIWI", "MANGO", "BLUE", "ANKIT", "ORANG"];
+
+
+
+
+
+
+
+
+
+
+
+
+const words = ["KIWI", "MANGO", "BLUE", "ANKIT", "ORANG","NARENDER","CUPCAKE"];
 const rows = 8;
 const cols = 8;
 
-// ======= DYNAMIC GRID =======
+// ======= DYNAMIC GRID ===
 let grid = [];
 let mat = [];
 
@@ -419,7 +431,13 @@ function placeWord(word) {
 
             let canPlace = true;
             for (let k = 0; k < word.length; k++) {
-                if (grid[r][c + k] !== "" && grid[r][c + k] !== word[k  ])
+
+                if(c+k>=cols){
+                    canPlace=false;
+                    break;
+                }
+
+                if (grid[r][c + k] !== "" && grid[r][c + k] !== word[k])
                     canPlace = false;
             }
 
@@ -439,6 +457,12 @@ function placeWord(word) {
 
             let canPlace = true;
             for (let k = 0; k < word.length; k++) {
+
+                if(r+k>=rows){
+                    canPlace=false;
+                    break;
+                }
+
                 if (grid[r + k][c] !== "" && grid[r + k][c] !== word[k])
                     canPlace = false;
             }
@@ -459,6 +483,12 @@ function placeWord(word) {
 
             let canPlace = true;
             for (let k = 0; k < word.length; k++) {
+
+                if(r+k>=rows || c+k>=cols){
+                    canPlace=false;
+                    break;
+                }
+
                 if (grid[r + k][c + k] !== "" && grid[r + k][c + k] !== word[k])
                     canPlace = false;
             }
@@ -480,7 +510,7 @@ function placeWord(word) {
             let canPlace = true;
             for (let k = 0; k < word.length; k++) {
 
-                if (c - k < 0) {
+                if (c - k < 0 || r+k>=rows) {
                     canPlace = false;
                     break;
                 }
@@ -498,58 +528,7 @@ function placeWord(word) {
         }
 
         // 4 = diagonal right-up ↗
-        else if (direction === 4) {
-
-            let r = Math.floor(Math.random() * rows);
-            let c = Math.floor(Math.random() * (cols - word.length + 1));
-
-            let canPlace = true;
-
-            for (let k = 0; k < word.length; k++) {
-
-                if (r - k < 0) {
-                    canPlace = false;
-                    break;
-                }
-
-                if (grid[r - k][c + k] !== "" && grid[r - k][c + k] !== word[k])
-                    canPlace = false;
-            }
-
-            if (canPlace) {
-                for (let k = 0; k < word.length; k++)
-                    grid[r - k][c + k] = word[k];
-
-                placed = true;
-            }
-        }
-
-        // 5 = diagonal left-up 
-        else if (direction === 5) {
-
-            let r = Math.floor(Math.random() * rows);
-            let c = Math.floor(Math.random() * cols);
-
-            let canPlace = true;
-
-            for (let k = 0; k < word.length; k++) {
-
-                if (r - k < 0 || c - k < 0) {
-                    canPlace = false;
-                    break;
-                }
-
-                if (grid[r - k][c - k] !== "" && grid[r - k][c - k] !== word[k])
-                    canPlace = false;
-            }
-
-            if (canPlace) {
-                for (let k = 0; k < word.length; k++)
-                    grid[r - k][c - k] = word[k];
-
-                placed = true;
-            }
-        }
+   
     }
 }
 
@@ -596,6 +575,18 @@ for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
         let div = document.createElement("div");
         div.className = "cell";
+
+
+       /* let color="#";
+        let symbol="123456789ABCDEF";
+
+        for(let i=0;i<6;i++){
+            color+=symbol[Math.floor(Math.random()*16)];
+        }
+        div.style.backgroundColor=color;
+*/
+    div.style.backgroundColor="#77eb34";
+
         div.textContent = grid[i][j];
 
       
@@ -614,10 +605,14 @@ let selectedCells = []; // keep track of highlighted cells
 
 // ======= GRID EVENTS FOR MOUSE DRAG =======
 gridDiv.addEventListener("mousedown", (e) => {
+
     if (!e.target.classList.contains("cell")) return;
 
     isDragging = true;
     let index = Array.from(gridDiv.children).indexOf(e.target);
+
+    console.log("the index="+index);
+
     let i = Math.floor(index / cols);
     let j = index % cols;
 
@@ -654,8 +649,10 @@ document.addEventListener("mouseup", () => {
         highlightWord(selectedWord);
         selectedWord = "";
         selectedCells = [];
-        mat = Array.from({ length: rows }, () => Array(cols).fill(0));
-        notE.innerText = "";
+
+       // mat = Array.from({ length: rows }, () => Array(cols).fill(0));
+        
+       notE.innerText = "";
     } else {
         // wrong word → remove highlight
         selectedCells.forEach(([i, j]) => {
@@ -710,7 +707,6 @@ function searchWordInGrid(word) {
             }
 
             if (k === word.length) return positions;
-
 
             // ---------- Vertical Down ↓
             positions = [];
@@ -798,11 +794,31 @@ function searchWordInGrid(word) {
 function highlightWord(word) {
     let pos = searchWordInGrid(word);
     if (!pos) return;
+
+      let a=0;
+        let co="#";
+        let sy="123456789ABCDE";
+
     pos.forEach(([i, j]) => {
         let index = i * cols + j;
         let div = gridDiv.children[index];
-        div.classList.add("found");
+        //div.classList.add("found");
+
+
+      
+        if(a===0){
+            for(let i=0;i<6;i++){
+                co+=sy[Math.floor(Math.random()*16)];
+            }
+            a=1;
+        }
+        div.style.backgroundColor=co;
+
+//syle property in js 
     });
+    a=0;
+    co="#";
+    
     
 
 
